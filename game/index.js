@@ -42,16 +42,22 @@ export default class Game {
     if (object.x < 0) {
       object.x = 0
       object.velocityX = 0
+      object.jumping = false
+      object.sideBonus = true
     } else if (object.x + object.width > Game.width) {
       object.x = Game.width - object.width
       object.velocityX = 0
+      object.jumping = false
+      object.sideBonus = true 
+    } else if(object.x > 0 && object.x + object.width < Game.width) {
+      object.sideBonus = false
     }
 
     // Platforms
     if (!object.onPlatform) {
       for (let platform of this.platforms) {
         // Check current tick
-        const current = object.y+object.height === platform.y && object.velocityY === platform.velocityY
+        const current = object.y+object.height === platform.y && object.velocityY >= 0
         // Check next tick
         const next = (object.y+object.height) <= platform.y && (object.y+object.height+object.velocityY) >= platform.y
         
@@ -67,16 +73,15 @@ export default class Game {
               this.start = true
             }
 
-            console.log("On platform")
             return false
+          } else {
+            object.jumping = true
           }
         }
       }
-    } else {
+    } else if(object.velocityX !== 0 || object.velocityY !== this.platforms[0].velocityY) {
       object.onPlatform = false
-    } 
-
-    
+    }
 
     // Bottom 
     if (object.y >= this.height) {
@@ -92,16 +97,18 @@ export default class Game {
   }
 
   update = () => {
+
     if (!this.player.onPlatform) {
-      console.log("Not on platform")
       this.player.velocityY += this.gravity
       this.player.velocityY *= this.friction
     }
 
     this.player.velocityX *= this.friction
+
+    this.player.velocityX = Math.round(this.player.velocityX * 1000)/ 1000
+    this.player.velocityY = Math.round(this.player.velocityY * 1000)/ 1000
     
     for (let platform of this.platforms) {
-      platform.update()
 
       if (this.start) {
         platform.velocityY = 3
@@ -118,8 +125,11 @@ export default class Game {
 
     const finish = this.collideObject(this.player)
 
-    console.log("Player vel:", this.player.velocityY, " Platform velocity:", this.platforms[0].velocityY)
     this.player.update()
+
+    for (let platform of this.platforms) {
+      platform.update()
+    }
 
     return finish
   }
@@ -136,10 +146,13 @@ Game.Player = class Player {
     this.x = x
     this.y = y
     this.onPlatform = false
+
+    this.sideBonus = false
   }
 
   jumpVelocity = () => {
-    return 25 + 1.3*Math.abs(this.velocityX)
+    const bonus = this.sideBonus ? 30 : 0
+    return 30 + 1.3*Math.abs(this.velocityX) + bonus
   }
 
   jump = () => {
@@ -153,6 +166,7 @@ Game.Player = class Player {
       this.velocityY -= this.jumpVelocity()
 
       this.jumping = true
+      this.sideBonus = false
     }
 
   }
@@ -168,6 +182,13 @@ Game.Player = class Player {
   update = () => {
     this.x += this.velocityX
     this.y += this.velocityY
+
+    if (Math.abs(this.velocityX) < .05) {
+      this.velocityX = 0
+    }
+    if (Math.abs(this.velocityY) < .05) {
+      this.velocityY = 0
+    }
   }
 }
 
