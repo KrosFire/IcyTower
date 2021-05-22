@@ -16,24 +16,26 @@ export default class Game {
     this.platformWidth = 15
     this.platforms = []
 
+    this.score = 0
+
     // The base Platform
-    this.generateBasePlatform(this.height-this.platformWidth)
+    this.generateBasePlatform(0, this.height-this.platformWidth)
 
     // Generate initial platforms
     for (let i=10; i>0; i-=1) {
       const length = Math.random() * (Game.width/3) + 40
       const left = Math.random() * (2*Game.width/3)
-      this.generatePlatform(length, left, i*(this.height/11))
+      this.generatePlatform(11-i, length, left, i*(this.height/11))
     }
   }
 
-  generatePlatform = (length, left, top) => {
-    const platform = new Platform(length, left, top, this.platformWidth)
+  generatePlatform = (score, length, left, top) => {
+    const platform = new Platform(score, length, left, top, this.platformWidth)
     this.platforms.push(platform)
   }
 
-  generateBasePlatform = (top) => {
-    const platform = new LevelPlatform(top, this.platformWidth)
+  generateBasePlatform = (score, top) => {
+    const platform = new LevelPlatform(score, top, this.platformWidth)
     this.platforms.push(platform)
   }
 
@@ -73,6 +75,10 @@ export default class Game {
               this.start = true
             }
 
+            if(this.start && platform.score > this.score) {
+              this.score = platform.score
+            }
+
             return false
           } else {
             object.jumping = true
@@ -97,6 +103,7 @@ export default class Game {
   }
 
   update = () => {
+    // Setup the next tick
 
     if (!this.player.onPlatform) {
       this.player.velocityY += this.gravity
@@ -105,32 +112,42 @@ export default class Game {
 
     this.player.velocityX *= this.friction
 
+    // Round the numbers down to .001
     this.player.velocityX = Math.round(this.player.velocityX * 1000)/ 1000
     this.player.velocityY = Math.round(this.player.velocityY * 1000)/ 1000
     
+    // Setup platforms
     for (let platform of this.platforms) {
-
-      if (this.start) {
+      if (this.start && platform.velocityY === 0) {
         platform.velocityY = 3
       }
 
       if (platform.y > this.height) {
         this.platforms.shift()
 
-        const length = (Math.random() * (Game.width/3)) + 30
-        const left = Math.random() * (2*Game.width/3)
-        this.generatePlatform(length, left, 0)
+        const lastPlatform = this.platforms[this.platforms.length-1]
+
+        if (lastPlatform.score % 50 === 49) {
+          this.generateBasePlatform(lastPlatform.score+1, 0)
+        } else {
+          const length = (Math.random() * (Game.width/3)) + 30
+          const left = Math.random() * (2*Game.width/3)
+          this.generatePlatform(lastPlatform.score+1, length, left, 0)
+        } 
       }
     }
 
+    // Check cllisions in next tick and act accoridngly
     const finish = this.collideObject(this.player)
 
+    // Update elements
     this.player.update()
 
     for (let platform of this.platforms) {
       platform.update()
     }
 
+    // Return game state
     return finish
   }
 }
@@ -172,11 +189,11 @@ Game.Player = class Player {
   }
 
   moveLeft = () => {
-    this.velocityX -= 1.5
+    this.velocityX -= 2.5
   }
 
   moveRight = () => {
-    this.velocityX += 1.5
+    this.velocityX += 2.5
   }
 
   update = () => {
@@ -194,17 +211,14 @@ Game.Player = class Player {
 
 class Platform {
   
-  constructor(length, x, y, width=10) {
+  constructor(score, length, x, y, width=10, velocity=0) {
     this.length = length
     this.x = x
     this.y = y
     this.width = width
     this.color = "#008EFF"
-    this.velocityY = 0
-  }
-
-  moveDown = velocity => {
     this.velocityY = velocity
+    this.score = score
   }
 
   update = () => {
@@ -215,8 +229,8 @@ class Platform {
 
 class LevelPlatform extends Platform {
 
-  constructor(y, width=10) {
-    super(Game.width, 0, y, width)
+  constructor(score, y, width=10) {
+    super(score, Game.width, 0, y, width)
   }
 
 }

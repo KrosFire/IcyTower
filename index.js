@@ -6,6 +6,7 @@ import Engine from "./engine/index.js"
 window.addEventListener("load", () => {
 
   const app = document.getElementById("app")
+  const scoreTable = document.getElementById("scoreTable")
 
   const keyDownUp = e => {
     controller.keyDownUp(e.type, e.keyCode)
@@ -14,6 +15,7 @@ window.addEventListener("load", () => {
   const render = time => {
     display.fill(game.backgroundColor)
     display.drawRectangle(game.player.x, game.player.y, game.player.width, game.player.height, game.player.color)
+    display.displayScore(game.score)
     
     // Display platforms
     for (let platform of game.platforms) {
@@ -47,7 +49,7 @@ window.addEventListener("load", () => {
   }
 
   const controller = new Controller()
-  const display = new Display(app)
+  const display = new Display(app, scoreTable)
   const game = new Game()
   const engine = new Engine(1000/30, render, update)
 

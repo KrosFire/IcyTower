@@ -5,4 +5,13 @@ body {
 
 #app {
   image-rendering: pixelated;
+  margin: 0 50px;
+}
+
+.score {
+  width: 100px;
+  height: 50px;
+  color: #000;
+  font-size: 26px;
+  margin-right: 50px;
 }

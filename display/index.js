@@ -1,8 +1,9 @@
 export default class Display {
 
-  constructor(canvas) {
+  constructor(canvas, scoreTable) {
     this.buffer = document.getElementById("app").getContext("2d")
     this.context = canvas.getContext("2d")
+    this.scoreTable = scoreTable
   }
 
   drawRectangle = (x, y, width, height, color) => {
@@ -20,4 +21,8 @@ export default class Display {
   render = () => {
     this.context.drawImage(this.buffer.canvas, 0, 0, this.buffer.canvas.width, this.buffer.canvas.height, 0, 0, this.context.canvas.width, this.context.canvas.height);
   };
+
+  displayScore = score => {
+    this.scoreTable.innerHTML = score
+  }
 }

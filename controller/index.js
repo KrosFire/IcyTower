@@ -14,7 +14,7 @@ export default class Controller {
       case 37: 
         this.left.getInput(down)
         break
-      case 38: 
+      case 32: 
         this.up.getInput(down)
         break
       case 39:
