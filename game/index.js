@@ -44,13 +44,25 @@ export default class Game {
     if (object.x < 0) {
       object.x = 0
       object.velocityX = 0
-      object.jumping = false
-      object.sideBonus = true
+
+      if (object.jumping && !object.onBonus) {
+        object.jumping = false
+        object.sideBonus = true
+        object.velocityX += 10
+      }
+
+      object.onBonus = true
     } else if (object.x + object.width > Game.width) {
       object.x = Game.width - object.width
       object.velocityX = 0
-      object.jumping = false
-      object.sideBonus = true 
+      
+      if (object.jumping && !object.onBonus) {
+        object.jumping = false
+        object.sideBonus = true
+        object.velocityX -= 10
+      }
+
+      object.onBonus = true
     } else if(object.x > 0 && object.x + object.width < Game.width) {
       object.sideBonus = false
     }
@@ -68,6 +80,7 @@ export default class Game {
           if (object.x+object.width >= platform.x && object.x <= platform.x+platform.length) {
             object.jumping = false
             object.onPlatform = true
+            object.onBonus = false
             object.y = platform.y-object.height
             object.velocityY = platform.velocityY
 
@@ -156,15 +169,19 @@ Game.Player = class Player {
   constructor(x=100, y=584) {
     this.color = "#ff0000"
     this.height = 16
+    this.width = 16
+
     this.jumping = true
+    
     this.velocityX = 0
     this.velocityY = 0
-    this.width = 16
     this.x = x
     this.y = y
+    
     this.onPlatform = false
 
     this.sideBonus = false
+    this.onBonus = false
   }
 
   jumpVelocity = () => {

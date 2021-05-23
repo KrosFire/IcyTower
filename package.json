@@ -1,0 +1,19 @@
+{
+  "name": "icytower",
+  "version": "1.0.0",
+  "description": "Clone of a popular platform game IcyTower",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KrosFire/IcyTower.git"
+  },
+  "author": "Hubert Jabłoński",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KrosFire/IcyTower/issues"
+  },
+  "homepage": "https://github.com/KrosFire/IcyTower#readme"
+}

@@ -28,6 +28,7 @@ export default class Controller {
 
 Controller.ButtonInput = class BtnInput {
   active = false
+  down = false
 
   getInput = down => {
     if (this.down != down) this.active = down
