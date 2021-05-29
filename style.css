@@ -1,6 +1,11 @@
+* { 
+  box-sizing: border-box;
+}
 body {
   display: flex;
   justify-content: center;
+  position: relative;
+  background-color: rgb(180, 180, 180);
 }
 
 #app {
@@ -8,10 +13,35 @@ body {
   margin: 0 50px;
 }
 
-.score {
+#score {
   width: 100px;
   height: 50px;
   color: #000;
   font-size: 26px;
   margin-right: 50px;
+}
+
+#popup {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgb(144, 26, 190);
+  width: 350px;
+  height: 350px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  visibility: hidden;
+}
+
+.show {
+  visibility: visible!important;
 }

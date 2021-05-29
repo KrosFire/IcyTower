@@ -59,4 +59,10 @@ export default class Engine {
     window.cancelAnimationFrame(this.animationFrameReq)
     this.finished = true
   }
+
+  resume = () => {
+    this.finished = false
+    this.time = window.performance.now()
+    this.animationFrameReq = window.requestAnimationFrame(this.run)
+  }
 }

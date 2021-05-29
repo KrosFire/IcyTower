@@ -3,10 +3,19 @@ import Display from "./display/index.js"
 import Game from "./game/index.js"
 import Engine from "./engine/index.js"
 
-window.addEventListener("load", () => {
+const playGame = () => {
 
   const app = document.getElementById("app")
-  const scoreTable = document.getElementById("scoreTable")
+  const scoreTable = document.getElementsByClassName("scoreTable")
+  const popup = document.getElementById("popup")
+  const btn = document.getElementById("play")
+  popup.classList.remove("show")
+
+  const displayPopup = () => {
+    popup.classList.add("show")
+
+    btn.addEventListener("click", playGame)
+  }
 
   const keyDownUp = e => {
     controller.keyDownUp(e.type, e.keyCode)
@@ -44,6 +53,7 @@ window.addEventListener("load", () => {
 
     if(game.update()) {
       engine.stop()
+      displayPopup()
       console.log("Game finished")
     }
   }
@@ -61,4 +71,7 @@ window.addEventListener("load", () => {
   window.addEventListener("keyup", keyDownUp)
 
   engine.start()
-})
+}
+
+
+window.addEventListener("load", playGame) 

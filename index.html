@@ -8,9 +8,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="score">Score: <span id="scoreTable"></span></div>
+  <div id="score">Score: <span class="scoreTable"></span></div>
   <canvas id="app"></canvas>
-
+  <div id="popup">
+    <h2 class="popupTitle">Game over!</h2>
+    <p> Your final score:
+      <span class="scoreTable"></span>
+    </p>
+    <button id="play">Play again!</button>
+  </div>
 
   <script type="module" src="index.js"></script>
 </body>
