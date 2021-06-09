@@ -1,4 +1,4 @@
-export default class Game {
+class Game {
 
   static get width() {return 300}
 
@@ -10,7 +10,7 @@ export default class Game {
     this.friction = 0.9
     this.gravity = 3
 
-    this.player = new Game.Player(100, 560)
+    this.player = new Player(100, 560)
     
     this.height = 600
 
@@ -214,150 +214,4 @@ export default class Game {
     // Return game state
     return finish
   }
-}
-
-Game.Player = class Player {
-  constructor(x=100, y=584) {
-    this.color = "#ff0000"
-    this.height = 20
-    this.width = 20
-
-    this.jumping = true
-    
-    this.velocityX = 0
-    this.velocityY = 0
-    this.x = x
-    this.y = y
-    
-    this.onPlatform = false
-
-    this.sideBonus = false
-    this.onBonus = false
-  }
-
-  jumpVelocity = () => {
-    const bonus = this.sideBonus ? 30 : 0
-    return 20 + 1.3*Math.abs(this.velocityX) + bonus
-  }
-
-  genColor = () => { 
-    return "hsl(" + 360 * Math.random() + ',' +
-               (80 + 20 * Math.random()) + '%,' + 
-               (50 + 10 * Math.random()) + '%)'
-  }
-
-  jump = () => {
-
-    if(!this.jumping) {
-      // this.color = `#${Math.floor(Math.random() * 16777216).toString(16)}`
-      this.color = this.genColor()
-
-      this.velocityY -= this.jumpVelocity()
-
-      this.jumping = true
-      this.sideBonus = false
-    }
-
-  }
-
-  moveLeft = () => {
-    this.velocityX -= 2
-  }
-
-  moveRight = () => {
-    this.velocityX += 2
-  }
-
-  update = () => {
-    this.x += this.velocityX
-    this.y += this.velocityY
-
-    if (Math.abs(this.velocityX) < .05) {
-      this.velocityX = 0
-    }
-    if (Math.abs(this.velocityY) < .05) {
-      this.velocityY = 0
-    }
-  }
-}
-
-class Platform {
-
-  static get minLength() {return 60}
-  static get maxLength() {return Game.width/3}
-  static get speed() {return 2}
-  static get color() {return "#008EFF"}
-  
-  constructor(score, length, x, y, width=10, velocity=0) {
-    this.length = length
-    this.x = x
-    this.y = y
-    this.width = width
-    this.color = Platform.color
-    this.velocityY = velocity
-    this.score = score
-  }
-
-  update = () => {
-    this.y += this.velocityY
-  }
-
-}
-
-class StandardPlatform extends Platform {
-
-  static get minLength() {return 50}
-  static get maxLength() {return Game.width/3}
-  static get speed() {return 2.5}
-  static get color() {return "#9704d6"}
-
-  constructor(score, length, x, y, width=10, velocity=0) {
-    super(score, length, x, y, width, velocity)
-    this.color = StandardPlatform.color
-  }
-}
-
-class IntermediatePlatform extends Platform {
-  static get minLength() {return 40}
-  static get maxLength() {return Game.width/3}
-  static get speed() {return 3}
-  static get color() {return "#13ef21"}
-
-  constructor(score, length, x, y, width=10, velocity=0) {
-    super(score, length, x, y, width, velocity)
-    this.color = IntermediatePlatform.color
-  }
-}
-
-class AdvancedPlatform extends Platform {
-  static get minLength() {return 30}
-  static get maxLength() {return Game.width/4}
-  static get speed() {return 3.5}
-  static get color() {return "#ef1334"}
-
-  constructor(score, length, x, y, width=10, velocity=0) {
-    super(score, length, x, y, width, velocity)
-    this.color = AdvancedPlatform.color
-  }
-}
-
-class ExpertPlatform extends Platform {
-  static get minLength() {return 30}
-  static get maxLength() {return Game.width/4.5}
-  static get speed() {return 5}
-  static get color() {return "#ffff14"}
-
-  constructor(score, length, x, y, width=10, velocity=0) {
-    super(score, length, x, y, width, velocity)
-    this.color = ExpertPlatform.color
-  }
-}
-
-class LevelPlatform extends Platform {
-
-  constructor(score, y, color="#fc50ee", width=10) {
-    super(score, Game.width, 0, y, width)
-    this.color = color
-  }
-
 }

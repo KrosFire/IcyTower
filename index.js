@@ -1,8 +1,3 @@
-import Controller from "./controller/index.js"
-import Display from "./display/index.js"
-import Game from "./game/index.js"
-import Engine from "./engine/index.js"
-
 const playGame = () => {
 
   const app = document.getElementById("app")

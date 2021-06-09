@@ -1,4 +1,4 @@
-export default class Controller {
+class Controller {
 
   constructor() {
     this.left = new Controller.ButtonInput()

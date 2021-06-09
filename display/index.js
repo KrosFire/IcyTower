@@ -1,4 +1,4 @@
-export default class Display {
+class Display {
 
   constructor(canvas, scoreTables) {
     this.buffer = document.getElementById("app").getContext("2d")
