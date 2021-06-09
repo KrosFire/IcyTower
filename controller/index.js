@@ -1,10 +1,10 @@
 class Controller {
 
   constructor() {
-    this.left = new Controller.ButtonInput()
-    this.right = new Controller.ButtonInput()
-    this.up = new Controller.ButtonInput()
-    this.stop = new Controller.ButtonInput()
+    this.left = new ButtonInput()
+    this.right = new ButtonInput()
+    this.up = new ButtonInput()
+    this.stop = new ButtonInput()
   }
 
   keyDownUp = (type, keyCode) => {
@@ -23,15 +23,5 @@ class Controller {
       case 27:
         this.stop.getInput(down)
     }
-  }
-}
-
-Controller.ButtonInput = class BtnInput {
-  active = false
-  down = false
-
-  getInput = down => {
-    if (this.down != down) this.active = down
-    this.down = down
   }
 }
