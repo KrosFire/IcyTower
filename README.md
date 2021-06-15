@@ -9,6 +9,9 @@ You are welcome to create Issues and forks.
 ## Run the game
 In order to play the game you just need to open index.html file :)
 
+(I use private fields in classes. See here if your browser supports it)
+https://caniuse.com/?search=private
+
 ## Controls
 You can move left/right with left/right arrows 
 and in order to jump, you need to press space.

@@ -17,32 +17,36 @@ const playGame = () => {
   }
 
   const render = time => {
-    display.fill(game.backgroundColor)
-    display.drawRectangle(game.player.x, game.player.y, game.player.width, game.player.height, game.player.color)
-    display.displayScore(game.score)
+    const player = game.getPlayer() 
+
+    display.fill(game.getBackgroundColor())
+    display.drawRectangle(player.getPositionX(), player.getPositionY(), player.getWidth(), player.getHeight(), player.getColor())
+    display.displayScore(game.getScore())
     
     // Display platforms
-    for (let platform of game.platforms) {
-      display.drawRectangle(platform.x, platform.y, platform.length, platform.width, platform.color)
+    for (let platform of game.getPlatforms()) {
+      display.drawRectangle(platform.getPositionX(), platform.getPositionY(), platform.getLength(), platform.getWidth(), platform.getColor())
     }
 
     display.render()
   }
 
   const update = time => {
+    const player = game.getPlayer()
+
     if (controller.stop.active) {
       engine.stop()
       console.log("STOP")
       return
     }
     if (controller.left.active) {
-      game.player.moveLeft()
+      player.moveLeft()
     }
     if (controller.right.active) {
-      game.player.moveRight()
+      player.moveRight()
     }
     if (controller.up.active) {
-      game.player.jump()
+      player.jump()
       controller.up.active = false
     }
 
@@ -59,7 +63,7 @@ const playGame = () => {
   const engine = new Engine(1000/30, render, update)
 
   console.log(game)
-  display.buffer.canvas.height = game.height
+  display.buffer.canvas.height = Game.height
   display.buffer.canvas.width = Game.width
 
   window.addEventListener("keydown", keyDownUp)

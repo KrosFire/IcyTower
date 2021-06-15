@@ -1,31 +1,35 @@
 class Game {
+  #backgroundColor
+  #start
+  #gameOver
+  #friction
+  #gravity
+  #player
+  #platformWidth
+  #platforms
+  #score
 
   static get width() {return 300}
+  static get height() {return 600}
 
   constructor() {
-    this.backgroundColor = "#000"
-    this.start = false
-    this.gameOver = false
-    
-    this.friction = 0.9
-    this.gravity = 3
-
-    this.player = new Player(100, 560)
-    
-    this.height = 600
-
-    this.platformWidth = 15
-    this.platforms = []
-
-    this.score = 0
+    this.#backgroundColor = "#000"
+    this.#start = false
+    this.#gameOver = false
+    this.#friction = 0.9
+    this.#gravity = 3
+    this.#player = new Player(100, 560)
+    this.#platformWidth = 15
+    this.#platforms = []
+    this.#score = 0
 
     // The base Platform
-    this.generateBasePlatform(0, this.height-this.platformWidth)
+    this.generateBasePlatform(0, Game.height-this.#platformWidth)
 
     // Generate initial platforms
     for (let i=10; i>0; i-=1) {
       const left = Math.random() * (2*Game.width/3)
-      this.generatePlatform(11-i, left, i*(this.height/11))
+      this.generatePlatform(11-i, left, i*(Game.height/11))
     }
   }
 
@@ -50,8 +54,8 @@ class Game {
   }
 
   generatePlatform = (score, left, top) => {
-    const platform = this.getAccordingPlatform(score, left, top, this.platformWidth)
-    this.platforms.push(platform)
+    const platform = this.getAccordingPlatform(score, left, top, this.#platformWidth)
+    this.#platforms.push(platform)
   }
 
   generateBasePlatform = (score, top) => {
@@ -75,83 +79,79 @@ class Game {
         break
     }
 
-    const platform = new LevelPlatform(score, top, color, this.platformWidth)
-    this.platforms.push(platform)
+    const platform = new LevelPlatform(score, top, color, this.#platformWidth)
+    this.#platforms.push(platform)
   }
 
   collideObject = object => {
 
     // Left/Right
-    if (object.x < 0) {
-      object.x = 0
+    if (object.getPositionX() < 0) {
+      object.setPositionX(0)
 
-      if (object.jumping && !object.onBonus) {
-        object.velocityX = -object.velocityX
-        object.velocityY = -Math.abs(object.velocityX)*2
-        object.sideBonus = true
+      if (object.isJumping() && !object.getSideBonus()) {
+        object.setVelocityX(-object.getVelocityX())
+        object.setVelocityY(-Math.abs(object.getVelocityX())*2)
       } else {
-        object.velocityX = 0
+        object.setVelocityX(0)
       }
 
-      object.onBonus = true
-    } else if (object.x + object.width > Game.width) {
-      object.x = Game.width - object.width
+      object.setSideBonus(true)
+    } else if (object.getPositionX() + object.getWidth() > Game.width) {
+      object.setPositionX(Game.width - object.getWidth())
       
-      if (object.jumping && !object.onBonus) {
-        object.velocityX = -object.velocityX
-        object.velocityY = -Math.abs(object.velocityX)*2
-        object.sideBonus = true
+      if (object.isJumping() && !object.getSideBonus()) {
+        object.setVelocityX(-object.getVelocityX())
+        object.setVelocityY(-Math.abs(object.getVelocityX())*2)
+        object.setSideBonus(true)
       } else {
-        object.velocityX = 0
+        object.setVelocityX(0)
       }
 
-      object.onBonus = true
-    } else if(object.x > 0 && object.x + object.width < Game.width) {
-      object.sideBonus = false
+      object.setSideBonus(true)
     }
 
     // Platforms
-    if (!object.onPlatform) {
-      for (let platform of this.platforms) {
+    if (!object.isOnPlatform()) {
+      for (let platform of this.#platforms) {
         // Check current tick
-        const current = object.y+object.height === platform.y && object.velocityY >= 0
+        const current = object.getPositionY()+object.getHeight() === platform.getPositionY() && object.getVelocityY() >= 0
         // Check next tick
-        const next = (object.y+object.height) <= platform.y && (object.y+object.height+object.velocityY) >= platform.y
-        
+        const next = (object.getPositionY()+object.getHeight()) <= platform.getPositionY() && (object.getPositionY()+object.getHeight()+object.getVelocityY()) >= platform.getPositionY()
         
         if (current || next) {
-          if (object.x+object.width >= platform.x && object.x <= platform.x+platform.length) {
-            object.jumping = false
-            object.onPlatform = true
-            object.onBonus = false
-            object.y = platform.y-object.height
-            object.velocityY = platform.velocityY
+          if (object.getPositionX()+object.getWidth() >= platform.getPositionX() && object.getPositionX() <= platform.getPositionX()+platform.getLength()) {
+            object.setJumping(false)
+            object.setOnPlatform(true)
+            object.setSideBonus(false)
+            object.setPositionY(platform.getPositionY()-object.getHeight())
+            object.setVelocityY(platform.getVelocityY())
 
-            if (!this.start && !(platform instanceof LevelPlatform) ) {
-              this.start = true
+            if (!this.#start && !(platform instanceof LevelPlatform) ) {
+              this.#start = true
             }
 
-            if(this.start && platform.score > this.score) {
-              this.score = platform.score
+            if(this.#start && platform.getScore() > this.#score) {
+              this.#score = platform.getScore()
             }
 
             return false
           } else {
-            object.jumping = true
+            object.setJumping(true)
           }
         }
       }
-    } else if(object.velocityX !== 0 || object.velocityY !== this.platforms[0].velocityY) {
-      object.onPlatform = false
+    } else if(object.getVelocityX !== 0 || object.getVelocityY() !== this.#platforms[0].getVelocityY()) {
+      object.setOnPlatform(false)
     }
 
     // Bottom 
-    if (object.y >= this.height) {
-      object.jumping = false
-      object.y = this.height - object.height
-      object.velocityY = 0
+    if (object.getPositionY() >= Game.height) {
+      object.setJumping(false)
+      object.setPositionY(Game.height - object.getHeight())
+      object.setVelocityY(0)
 
-      this.gameOver = true
+      this.#gameOver = true
       return true
     }
 
@@ -161,57 +161,73 @@ class Game {
   update = () => {
     // Setup the next tick
 
-    if (!this.player.onPlatform) {
-      this.player.velocityY += this.gravity
-      this.player.velocityY *= this.friction
+    if (!this.#player.isOnPlatform()) {
+      this.#player.setVelocityY(this.#player.getVelocityY() + this.#gravity)
+      this.#player.setVelocityY(this.#player.getVelocityY() * this.#friction)
     }
 
-    this.player.velocityX *= this.friction
+    this.#player.setVelocityX(this.#player.getVelocityX()*this.#friction)
 
     // Round the numbers down to .001
-    this.player.velocityX = Math.round(this.player.velocityX * 1000)/ 1000
-    this.player.velocityY = Math.round(this.player.velocityY * 1000)/ 1000
+    this.#player.setVelocityX(Math.round(this.#player.getVelocityX() * 1000)/ 1000)
+    this.#player.setVelocityY(Math.round(this.#player.getVelocityY() * 1000)/ 1000)
     
     // Setup platforms
-    const lastPlatform = this.platforms[this.platforms.length-1]
-    for (let platform of this.platforms) {
-      if (this.start) {
-        if (lastPlatform.score < 50) {
-          platform.velocityY = Platform.speed
-        } else if (lastPlatform.score < 100) {
-          platform.velocityY = StandardPlatform.speed
-        } else if (lastPlatform.score < 150) {
-          platform.velocityY = IntermediatePlatform.speed
-        } else if (lastPlatform.score < 200) {
-          platform.velocityY = AdvancedPlatform.speed
+    const lastPlatform = this.#platforms[this.#platforms.length-1]
+    for (let platform of this.#platforms) {
+      if (this.#start) {
+        if (lastPlatform.getScore() < 50) {
+          platform.setVelocityY(Platform.speed)
+        } else if (lastPlatform.getScore() < 100) {
+          platform.setVelocityY(StandardPlatform.speed)
+        } else if (lastPlatform.getScore() < 150) {
+          platform.setVelocityY(IntermediatePlatform.speed)
+        } else if (lastPlatform.getScore() < 200) {
+          platform.setVelocityY(AdvancedPlatform.speed)
         } else {
-          platform.velocityY = ExpertPlatform.speed
+          platform.setVelocityY(ExpertPlatform.speed)
         }
       }
 
-      if (platform.y > this.height) {
-        this.platforms.shift()
+      if (platform.getPositionY() > Game.height) {
+        this.#platforms.shift()
       
-        if (lastPlatform.score % 50 === 49) {
-          this.generateBasePlatform(lastPlatform.score+1, 0)
+        if (lastPlatform.getScore() % 50 === 49) {
+          this.generateBasePlatform(lastPlatform.getScore()+1, 0)
         } else {
           const left = Math.random() * (2*Game.width/3)
-          this.generatePlatform(lastPlatform.score+1, left, 0)
+          this.generatePlatform(lastPlatform.getScore()+1, left, 0)
         } 
       }
     }
 
     // Check collisions in next tick and act accordingly
-    const finish = this.collideObject(this.player)
+    const finish = this.collideObject(this.#player)
 
     // Update elements
-    this.player.update()
+    this.#player.update()
 
-    for (let platform of this.platforms) {
+    for (let platform of this.#platforms) {
       platform.update()
     }
 
     // Return game state
     return finish
+  }
+
+  getBackgroundColor = () => {
+    return this.#backgroundColor
+  }
+
+  getPlayer = () => {
+    return this.#player
+  }
+
+  getScore = () => {
+    return this.#score
+  }
+
+  getPlatforms = () => {
+    return this.#platforms
   }
 }
